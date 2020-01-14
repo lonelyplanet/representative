@@ -1,12 +1,12 @@
-require "active_support/json"
-require "active_support/core_ext/array/extract_options"
-require "representative/base"
+# frozen_string_literal: true
+
+require 'active_support/json'
+require 'active_support/core_ext/array/extract_options'
+require 'representative/base'
 
 module Representative
-
   class Json < Base
-
-    DEFAULT_ATTRIBUTE_PREFIX = "@".freeze
+    DEFAULT_ATTRIBUTE_PREFIX = '@'
     DEFAULT_INDENTATION = 2 # two spaces
 
     def initialize(subject = nil, options = {})
@@ -22,21 +22,19 @@ module Representative
     attr_reader :attribute_prefix
 
     def element(name, *args, &block)
-
       metadata = @inspector.get_metadata(current_subject, name)
       attributes = args.extract_options!.merge(metadata)
 
       subject_of_element = if args.empty?
-        @inspector.get_value(current_subject, name)
-      else
-        args.shift
+                             @inspector.get_value(current_subject, name)
+                           else
+                             args.shift
       end
 
-      raise ArgumentError, "too many arguments" unless args.empty?
+      raise ArgumentError, 'too many arguments' unless args.empty?
 
       label(name)
       value(subject_of_element, attributes, &block)
-
     end
 
     def attribute(name, value_generator = name)
@@ -46,14 +44,16 @@ module Representative
     def list_of(name, *args, &block)
       options = args.extract_options!
       list_subject = args.empty? ? name : args.shift
-      raise ArgumentError, "too many arguments" unless args.empty?
+      raise ArgumentError, 'too many arguments' unless args.empty?
+
       list_attributes = options[:list_attributes]
       raise ArgumentError, "list_attributes #{list_attributes} not supported for json representation" if list_attributes
+
       item_attributes = options[:item_attributes] || {}
 
       items = resolve_value(list_subject)
       label(name)
-      inside "[", "]" do
+      inside '[', ']' do
         items.each do |item|
           new_item
           value(item, item_attributes, &block)
@@ -64,7 +64,7 @@ module Representative
     def value(subject, attributes = {})
       representing(subject) do
         if block_given? && !current_subject.nil?
-          inside "{", "}" do
+          inside '{', '}' do
             attributes.each do |name, value_generator|
               attribute(name, value_generator)
             end
@@ -79,11 +79,11 @@ module Representative
 
     def comment(text)
       new_item
-      emit("// " + text)
+      emit('// ' + text)
       now_at :end_of_comment
     end
 
-    def to_json
+    def to_json(*_args)
       emit("\n") if indenting?
       @buffer.join
     end
@@ -97,13 +97,13 @@ module Representative
     def resolve_indentation(arg)
       case arg
       when Integer
-        " " * arg
+        ' ' * arg
       when /\A[ \t]*\Z/
         arg
       when nil, false
         false
       else
-        raise ArgumentError, "invalid indentation setting"
+        raise ArgumentError, 'invalid indentation setting'
       end
     end
 
@@ -125,18 +125,19 @@ module Representative
 
     def label(name)
       return false if @indent_level == 0
+
       new_item
-      emit(format_name(name).inspect + ":")
-      emit(" ") if indenting?
+      emit(format_name(name).inspect + ':')
+      emit(' ') if indenting?
     end
 
     def new_item
-      emit(",") if at? :end_of_item
+      emit(',') if at? :end_of_item
       if indenting?
         emit("\n") unless at? :beginning_of_buffer
         emit(current_indentation)
       end
-      @pending_comma = ","
+      @pending_comma = ','
     end
 
     def inside(opening_char, closing_char)
@@ -159,9 +160,7 @@ module Representative
     def at?(state)
       @state == state
     end
-
   end
 
   JSON = Json
-
 end

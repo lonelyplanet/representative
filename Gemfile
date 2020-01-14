@@ -1,10 +1,12 @@
-source "https://rubygems.org"
+# frozen_string_literal: true
+
+source 'https://rubygems.org'
 
 gemspec
 
-gem "rake"
-gem "tilt"
-gem "diff-lcs"
-gem "ruby-prof"
-gem "clamp"
-gem "json"
+gem 'clamp'
+gem 'diff-lcs'
+gem 'json'
+gem 'rake'
+gem 'ruby-prof'
+gem 'tilt'

@@ -1,11 +1,12 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
-require "representative/xml"
-require "representative/xml_behaviour"
-require "rexml/document"
+require 'representative/xml'
+require 'representative/xml_behaviour'
+require 'rexml/document'
 
 describe Representative::Xml do
-
   before do
     @xml = Builder::XmlMarkup.new
   end
@@ -18,6 +19,5 @@ describe Representative::Xml do
     @xml.target!
   end
 
-  it_should_behave_like "an XML Representative"
-  
+  it_should_behave_like 'an XML Representative'
 end
