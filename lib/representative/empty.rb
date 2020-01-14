@@ -1,5 +1,5 @@
+# frozen_string_literal: true
+
 module Representative
-  
-  EMPTY = Proc.new {}.freeze
-  
+  EMPTY = proc {}.freeze
 end

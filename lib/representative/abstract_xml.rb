@@ -1,14 +1,12 @@
-require "representative/base"
-require "active_support/core_ext/array/extract_options"
+# frozen_string_literal: true
+
+require 'representative/base'
+require 'active_support/core_ext/array/extract_options'
 
 module Representative
-
   class AbstractXml < Base
-
     def initialize(subject = nil, options = {})
-      unless options.has_key?(:naming_strategy)
-        options = options.merge!(:naming_strategy => :dasherize)
-      end
+      options = options.merge!(naming_strategy: :dasherize) unless options.key?(:naming_strategy)
       super(subject, options)
     end
 
@@ -43,37 +41,31 @@ module Representative
     #   # => <size type="integer">9</size>
     #
     def element(name, *args, &block)
-
       metadata = @inspector.get_metadata(current_subject, name)
       attributes = args.extract_options!.merge(metadata)
 
       subject_of_element = if args.empty?
-        @inspector.get_value(current_subject, name)
-      else
-        args.shift
+                             @inspector.get_value(current_subject, name)
+                           else
+                             args.shift
       end
 
-      raise ArgumentError, "too many arguments" unless args.empty?
+      raise ArgumentError, 'too many arguments' unless args.empty?
 
       representing(subject_of_element) do
-
         resolved_attributes = resolve_attributes(attributes)
         content_string = content_block = nil
 
         unless current_subject.nil?
           if block
-            unless block == Representative::EMPTY
-              content_block = Proc.new { block.call(current_subject) }
-            end
+            content_block = proc { block.call(current_subject) } unless block == Representative::EMPTY
           else
             content_string = current_subject.to_s
           end
         end
 
         generate_element(format_name(name), resolved_attributes, content_string, &content_block)
-
       end
-
     end
 
     # Generate a list of elements from Enumerable data.
@@ -91,22 +83,20 @@ module Representative
     # by name from the current #subject.
     #
     def list_of(name, *args, &block)
-
       options = args.extract_options!
       list_subject = args.empty? ? name : args.shift
-      raise ArgumentError, "too many arguments" unless args.empty?
+      raise ArgumentError, 'too many arguments' unless args.empty?
 
       list_attributes = options[:list_attributes] || {}
       item_name = options[:item_name] || name.to_s.singularize
       item_attributes = options[:item_attributes] || {}
 
       items = resolve_value(list_subject)
-      element(name, items, list_attributes.merge(:type => proc{"array"})) do
+      element(name, items, list_attributes.merge(type: proc { 'array' })) do
         items.each do |item|
           element(item_name, item, item_attributes, &block)
         end
       end
-
     end
 
     # Return a magic value that, when passed to #element as a block, forces
@@ -122,16 +112,10 @@ module Representative
     private
 
     def resolve_attributes(attributes)
-      if attributes
-        attributes.inject({}) do |resolved, (name, value_generator)|
-          resolved_value = resolve_value(value_generator)
-          resolved[format_name(name)] = resolved_value unless resolved_value.nil?
-          resolved
-        end
+      attributes&.each_with_object({}) do |(name, value_generator), resolved|
+        resolved_value = resolve_value(value_generator)
+        resolved[format_name(name)] = resolved_value unless resolved_value.nil?
       end
     end
-
   end
-
 end
-

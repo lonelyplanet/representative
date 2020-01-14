@@ -1,9 +1,9 @@
-require "representative/object_inspector"
+# frozen_string_literal: true
+
+require 'representative/object_inspector'
 
 module Representative
-
   class Base
-
     def initialize(subject = nil, options = {})
       @subjects = [subject]
       @inspector = options[:inspector] || ObjectInspector.new
@@ -19,7 +19,7 @@ module Representative
       @subjects.last
     end
 
-    alias :subject :current_subject
+    alias subject current_subject
 
     # Evaluate a block with a specified object as #subject.
     #
@@ -41,9 +41,9 @@ module Representative
     def resolve_value(value_generator)
       if value_generator == :self
         current_subject
-      elsif value_generator.kind_of?(Symbol)
-        current_subject.send(value_generator) unless current_subject.nil?
-      elsif value_generator.kind_of?(Proc)
+      elsif value_generator.is_a?(Symbol)
+        current_subject&.send(value_generator)
+      elsif value_generator.is_a?(Proc)
         value_generator.call(current_subject) unless current_subject.nil?
       else
         value_generator
@@ -63,7 +63,5 @@ module Representative
         @naming_strategy.to_proc.call(name)
       end
     end
-
   end
-
 end

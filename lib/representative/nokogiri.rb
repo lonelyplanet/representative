@@ -1,13 +1,13 @@
-require "nokogiri"
-require "representative/abstract_xml"
-require "representative/empty"
+# frozen_string_literal: true
+
+require 'nokogiri'
+require 'representative/abstract_xml'
+require 'representative/empty'
 
 module Representative
-
   # Easily generate XML while traversing an object-graph.
   #
   class Nokogiri < AbstractXml
-
     def initialize(subject = nil, options = {})
       super(subject, options)
       @doc = ::Nokogiri::XML::Document.new
@@ -38,9 +38,7 @@ module Representative
     def attribute(name, value_generator = name)
       attribute_name = name.to_s.dasherize
       value = resolve_value(value_generator)
-      unless value.nil?
-        current_element[attribute_name] = value.to_s
-      end
+      current_element[attribute_name] = value.to_s unless value.nil?
     end
 
     private
@@ -59,7 +57,5 @@ module Representative
         end
       end
     end
-
   end
-
 end

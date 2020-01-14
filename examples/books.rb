@@ -1,33 +1,34 @@
 #! /usr/bin/env ruby
+# frozen_string_literal: true
 
-require "ostruct"
+require 'ostruct'
 
 @books = [
   OpenStruct.new(
-    :title => "Sailing for old dogs",
-    :authors => ["Jim Watson"],
-    :published => OpenStruct.new(
-      :by => "Credulous Print",
-      :year => 1994
+    title: 'Sailing for old dogs',
+    authors: ['Jim Watson'],
+    published: OpenStruct.new(
+      by: 'Credulous Print',
+      year: 1994
     )
   ),
   OpenStruct.new(
-    :title => "On the horizon",
-    :authors => ["Zoe Primpton", "Stan Ford"],
-    :published => OpenStruct.new(
-      :by => "McGraw-Hill",
-      :year => 2005
+    title: 'On the horizon',
+    authors: ['Zoe Primpton', 'Stan Ford'],
+    published: OpenStruct.new(
+      by: 'McGraw-Hill',
+      year: 2005
     )
   ),
   OpenStruct.new(
-    :title => "The Little Blue Book of VHS Programming",
-    :authors => ["Henry Nelson"],
-    :rating => "****"
+    title: 'The Little Blue Book of VHS Programming',
+    authors: ['Henry Nelson'],
+    rating: '****'
   )
 ]
 
-require "representative/json"
-require "representative/nokogiri"
+require 'representative/json'
+require 'representative/nokogiri'
 
 def represent_books(r)
   r.list_of :books, @books do

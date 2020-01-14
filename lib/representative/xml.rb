@@ -1,14 +1,14 @@
-require "active_support/inflector"
-require "builder"
-require "representative/abstract_xml"
-require "representative/empty"
+# frozen_string_literal: true
+
+require 'active_support/inflector'
+require 'builder'
+require 'representative/abstract_xml'
+require 'representative/empty'
 
 module Representative
-
   # Easily generate XML while traversing an object-graph.
   #
   class Xml < AbstractXml
-
     # Create an XML-generating Representative.  The first argument should be an instance of
     # Builder::XmlMarkup (or something that implements it's interface).  The second argument
     # if any, is the initial #subject of representation.
@@ -31,7 +31,5 @@ module Representative
       tag_args = [content_string, resolved_attributes].compact
       @xml.tag!(name, *tag_args, &content_block)
     end
-
   end
-
 end
